@@ -1,0 +1,53 @@
+name: Deploy 3D Frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: balancebey-3d-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://3d.balancebey.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/balancebey_3d
+          chmod 600 ~/.ssh/balancebey_3d
+          printf '%s\n' '185.184.210.102 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC2/cCrAYdNlNzTQ+qOks8Ke5DlZ4IrViQJHDeQckAiI' >> ~/.ssh/known_hosts
+
+      - name: Deploy atomically
+        run: |
+          tar -czf /tmp/balancebey-3d-frontend.tgz -C dist .
+          scp -i ~/.ssh/balancebey_3d /tmp/balancebey-3d-frontend.tgz root@185.184.210.102:/tmp/balancebey-3d-frontend.tgz
+          ssh -i ~/.ssh/balancebey_3d root@185.184.210.102 'set -eu; release=/tmp/balancebey-3d-release; rm -rf "$release"; mkdir -p "$release"; tar -xzf /tmp/balancebey-3d-frontend.tgz -C "$release"; rsync -a --delete "$release"/ /var/www/balancebey-3d/; chown -R www-data:www-data /var/www/balancebey-3d; rm -rf "$release" /tmp/balancebey-3d-frontend.tgz'
+
+      - name: Verify production
+        run: curl --fail --silent --show-error --retry 5 --retry-delay 3 https://3d.balancebey.com/ > /dev/null

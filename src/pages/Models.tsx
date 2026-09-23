@@ -19,6 +19,7 @@ type CollectionModel = {
   exposure?: string
   theme?: 'gold'
   placementNote?: string
+  ceilingAsset?: string
 }
 
 const models: CollectionModel[] = [
@@ -49,6 +50,7 @@ const models: CollectionModel[] = [
     exposure: '0.8',
     theme: 'gold',
     placementNote: 'AR önizlemesi zemini referans alır; tavan montaj yüksekliği temsilidir.',
+    ceilingAsset: '/models/altin-kristal-avize-v1/avize-tavan-v1.usdz',
   },
 ]
 
@@ -66,6 +68,7 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
   const [qrError, setQRError] = useState(false)
   const [copyError, setCopyError] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [phoneMode, setPhoneMode] = useState<'standard' | 'ceiling'>('standard')
   const shareURL = `${window.location.origin}/modellemeler?model=${model.id}`
   const dialogTitle = `phone-title-${model.id}`
 
@@ -98,7 +101,10 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
     return ()=>{active=false}
   },[shareURL])
 
-  function showPhone(){setCopied(false);setCopyError(false);dialog.current?.showModal()}
+  function showPhone(){setPhoneMode('standard');setCopied(false);setCopyError(false);dialog.current?.showModal()}
+  function supportsQuickLook(link: HTMLAnchorElement){
+    try{return link.relList.supports('ar')}catch{return false}
+  }
   function openAR(){
     const element=viewer.current
     if(!element || !ready)return
@@ -132,6 +138,13 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
       <button className="model-ar-button" aria-label={`${model.name}: AR ile gör`} onClick={openAR} disabled={!ready||!!error}><ARIcon/> AR ile gör <span aria-hidden="true">↗</span></button>
       <p className="ar-helper">Desteklenen telefonda kameranızla, gerçek ölçekte. Bilgisayarda QR kod ile telefonunuza geçin.</p>
       {model.placementNote&&<p className="model-placement-note">{model.placementNote}</p>}
+      {model.ceilingAsset&&<div className="ceiling-preview">
+        <span className="ceiling-preview-badge">Deneysel</span>
+        <p id={`ceiling-note-${model.id}`}>Kamerayı tavana yöneltin. Algılama düz tavanlarda başarısız olabilir; bu mod iPhone/iPad’de deneme aşamasında.</p>
+        <a className="ceiling-ar-link" rel="ar" href={`${model.ceilingAsset}#allowsContentScaling=0`} aria-describedby={`ceiling-note-${model.id}`} onClick={event=>{
+          if(!supportsQuickLook(event.currentTarget)){event.preventDefault();showPhone();setPhoneMode('ceiling')}
+        }}><img src={`${model.asset}/poster.webp`} alt="" width="38" height="38"/><span>iPhone’da tavanda dene</span><span aria-hidden="true">↗</span></a>
+      </div>}
       <button className="phone-link" aria-label={`${model.name}: Telefonda aç`} onClick={showPhone}>Telefonda aç <span aria-hidden="true">↗</span></button>
       {arMessage&&<p className="ar-message" role="status">{arMessage}</p>}
     </div>
@@ -139,12 +152,14 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
       <button className="dialog-close" aria-label="Kapat" onClick={()=>dialog.current?.close()}>×</button>
       <p className="eyebrow">MEKÂNINDA DENE</p><h2 id={dialogTitle}>Telefonunda aç.</h2>
       <p className="phone-model-name">{model.name}</p>
-      <p>Kameranla QR kodu okut. Açılan sayfada <strong>AR ile gör</strong> düğmesine dokun.</p>
+      <p>Kameranla QR kodu okut. Açılan sayfada <strong>{phoneMode === 'ceiling' ? 'iPhone’da tavanda dene' : 'AR ile gör'}</strong> {phoneMode === 'ceiling' ? 'bağlantısına' : 'düğmesine'} dokun.</p>
       {qr?<img className="model-qr" src={qr} alt={`${model.name} sayfasını telefonda açmak için QR kod`} width="256" height="256"/>:<p role="status">{qrError?'QR kod oluşturulamadı. Aşağıdaki bağlantıyı kullanabilirsiniz.':'QR kod hazırlanıyor…'}</p>}
       <button className="copy-model-link" onClick={copyLink}>{copied?'Bağlantı kopyalandı ✓':'Bağlantıyı kopyala'}</button>
       {copyError&&<p role="status">Bağlantı kopyalanamadı. Aşağıdaki bağlantıyı kullanabilirsiniz.</p>}
       <a className="model-share-url" href={shareURL}>{shareURL}</a>
-      <p className="phone-requirements">iPhone / iPad: Safari ve AR Quick Look.<br/>Android: {model.arModes ? 'WebXR destekli Chrome ve AR destekli cihaz.' : 'Chrome ve AR destekli cihaz.'}<br/>Kamera izni gerekir; modeli yerleştirirken zemini tarayın.{model.placementNote&&<><br/>{model.placementNote}</>}</p>
+      {phoneMode === 'ceiling'
+        ? <p className="phone-requirements">Bu deneysel mod iPhone / iPad’de Safari ve AR Quick Look ile açılır. Kamerayı tavana yöneltin; tavan algılanamayabilir.</p>
+        : <p className="phone-requirements">iPhone / iPad: Safari ve AR Quick Look.<br/>Android: {model.arModes ? 'WebXR destekli Chrome ve AR destekli cihaz.' : 'Chrome ve AR destekli cihaz.'}<br/>Kamera izni gerekir; modeli yerleştirirken zemini tarayın.{model.placementNote&&<><br/>{model.placementNote}</>}</p>}
     </dialog>
   </article>
 }

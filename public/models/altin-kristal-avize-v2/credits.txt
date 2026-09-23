@@ -1,0 +1,7 @@
+Altin Kristal Avize: Blender model created from the supplied visual reference.
+Estimated overall dimensions: 0.783m diameter, 1.085m height, including ceiling rose.
+Studio Small 09 HDRI by Sergej Majboroda / Poly Haven, CC0.
+https://polyhaven.com/a/studio_small_09
+https://polyhaven.com/license
+GLB: PBR gold, faceted crystal transmission/IOR/volume. USDZ: USD Preview Surface materials.
+AR uses a floor reference for preview; ceiling tracking and automatic mounting are not supported.

@@ -1,0 +1,8 @@
+{
+  "name": "BalanceBey 3D Studio",
+  "short_name": "BB 3D",
+  "icons": [{"src": "/brand/balancebey-3d-logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any maskable"}],
+  "theme_color": "#111827",
+  "background_color": "#f0eee7",
+  "display": "standalone"
+}

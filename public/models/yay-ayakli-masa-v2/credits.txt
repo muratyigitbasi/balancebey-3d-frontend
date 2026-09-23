@@ -1,0 +1,5 @@
+White Oak Veneer by Jenelle van Heerden / Poly Haven, CC0.
+https://polyhaven.com/a/white_oak_veneer
+https://polyhaven.com/license
+2K diffuse, roughness and OpenGL normal maps embedded in the GLB and USDZ.
+Model dimensions and approved geometry preserved. UV grain follows the curved frames.

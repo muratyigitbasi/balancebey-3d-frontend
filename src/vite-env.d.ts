@@ -10,7 +10,7 @@ declare module 'react' {
       exposure?: string; 'shadow-intensity'?: string; poster?: string; alt?: string;
       'ar-modes'?: string; 'ar-scale'?: string; 'ar-placement'?: string; 'touch-action'?: string;
       'shadow-softness'?: string; 'camera-orbit'?: string; 'field-of-view'?: string;
-      loading?: string; reveal?: string; 'interaction-prompt'?: string;
+      'xr-environment'?: boolean; loading?: string; reveal?: string; 'interaction-prompt'?: string;
     }
    }
   }

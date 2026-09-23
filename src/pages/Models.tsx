@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import type {ModelViewerElement} from '@google/model-viewer'
 import QRCode from 'qrcode'
 
-const asset = '/models/yay-ayakli-masa-v1'
+const asset = '/models/yay-ayakli-masa-v2'
 const modelName = 'Yay Ayaklı Masa'
 
 function CubeIcon(){return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Z M3 7l9 5 9-5 M12 12v10"/></svg>}
@@ -71,7 +71,7 @@ export function Models(){
       <article className="model-card" id="yay-ayakli-masa">
         <div className="model-stage">
           <span className="model-category"><CubeIcon/> MOBİLYA</span>
-          <model-viewer key={attempt} ref={viewer} src={`${asset}/masa.glb`} ios-src={`${asset}/masa.usdz`} poster={`${asset}/poster.webp`} alt="Açık ahşap, içe kavisli iki çerçeve ayak ve ince açık renk tabladan oluşan masa" ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor" camera-controls touch-action="pan-y" shadow-intensity="1" shadow-softness="1" exposure="1" camera-orbit="35deg 70deg auto" field-of-view="30deg" loading="eager" reveal="auto" interaction-prompt="auto">
+          <model-viewer key={attempt} ref={viewer} src={`${asset}/masa.glb`} ios-src={`${asset}/masa.usdz`} poster={`${asset}/poster.webp`} alt="Açık ahşap, içe kavisli iki çerçeve ayak ve ince açık renk tabladan oluşan masa" ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" xr-environment ar-placement="floor" camera-controls touch-action="pan-y" shadow-intensity="1" shadow-softness="1" exposure="1" camera-orbit="35deg 70deg auto" field-of-view="30deg" loading="eager" reveal="auto" interaction-prompt="auto">
             <span slot="ar-button" hidden/>
             <button slot="ar-failure" className="ar-failure" onClick={showPhone}>AR açılamadı · Telefonda aç</button>
           </model-viewer>

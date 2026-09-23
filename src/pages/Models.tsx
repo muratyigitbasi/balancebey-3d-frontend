@@ -49,7 +49,7 @@ const models: CollectionModel[] = [
     skybox: '/models/altin-kristal-avize-v2/skybox.png',
     exposure: '0.8',
     theme: 'gold',
-    placementNote: 'AR önizlemesi zemini referans alır; tavan montaj yüksekliği temsilidir.',
+    placementNote: 'iPhone/iPad: kamerayı tavana yöneltin. Tavan yerleşimi deneme aşamasındadır. Android önizlemesi zemini referans alır.',
     ceilingAsset: '/models/altin-kristal-avize-v2/avize-tavan-v2.usdz',
   },
 ]
@@ -68,7 +68,9 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
   const [qrError, setQRError] = useState(false)
   const [copyError, setCopyError] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [phoneMode, setPhoneMode] = useState<'standard' | 'ceiling'>('standard')
+  const phoneMode = model.ceilingAsset ? 'ceiling' : 'standard'
+  // Quick Look must receive the same ceiling asset through the primary AR button.
+  const iosAsset = model.ceilingAsset || `${model.asset}/${model.file}.usdz`
   const shareURL = `${window.location.origin}/modellemeler?model=${model.id}`
   const dialogTitle = `phone-title-${model.id}`
 
@@ -101,10 +103,7 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
     return ()=>{active=false}
   },[shareURL])
 
-  function showPhone(){setPhoneMode('standard');setCopied(false);setCopyError(false);dialog.current?.showModal()}
-  function supportsQuickLook(link: HTMLAnchorElement){
-    try{return link.relList.supports('ar')}catch{return false}
-  }
+  function showPhone(){setCopied(false);setCopyError(false);dialog.current?.showModal()}
   function openAR(){
     const element=viewer.current
     if(!element || !ready)return
@@ -120,7 +119,7 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
   return <article className={`model-card${model.theme ? ` model-card-${model.theme}` : ''}`} id={model.id} aria-labelledby={`model-title-${model.id}`}>
     <div className="model-stage">
       <span className="model-category"><CubeIcon/> {model.category}</span>
-      <model-viewer key={attempt} ref={viewer} src={`${model.asset}/${model.file}.glb`} ios-src={`${model.asset}/${model.file}.usdz`} poster={`${model.asset}/poster.webp`} alt={model.alt} ar ar-modes={model.arModes || 'webxr scene-viewer quick-look'} ar-scale="fixed" xr-environment ar-placement="floor" camera-controls touch-action="pan-y" shadow-intensity={model.theme === 'gold' ? '0' : '1'} shadow-softness="1" environment-image={model.environment} skybox-image={model.skybox} exposure={model.exposure || '1'} camera-orbit={model.cameraOrbit} field-of-view="30deg" loading={eager ? 'eager' : 'lazy'} reveal="auto" interaction-prompt="auto">
+      <model-viewer key={attempt} ref={viewer} src={`${model.asset}/${model.file}.glb`} ios-src={iosAsset} poster={`${model.asset}/poster.webp`} alt={model.alt} ar ar-modes={model.arModes || 'webxr scene-viewer quick-look'} ar-scale="fixed" xr-environment ar-placement="floor" camera-controls touch-action="pan-y" shadow-intensity={model.theme === 'gold' ? '0' : '1'} shadow-softness="1" environment-image={model.environment} skybox-image={model.skybox} exposure={model.exposure || '1'} camera-orbit={model.cameraOrbit} field-of-view="30deg" loading={eager ? 'eager' : 'lazy'} reveal="auto" interaction-prompt="auto">
         <span slot="ar-button" hidden/>
         <button slot="ar-failure" className="ar-failure" onClick={showPhone}>AR açılamadı · Telefonda aç</button>
       </model-viewer>
@@ -138,13 +137,6 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
       <button className="model-ar-button" aria-label={`${model.name}: AR ile gör`} onClick={openAR} disabled={!ready||!!error}><ARIcon/> AR ile gör <span aria-hidden="true">↗</span></button>
       <p className="ar-helper">Desteklenen telefonda kameranızla, gerçek ölçekte. Bilgisayarda QR kod ile telefonunuza geçin.</p>
       {model.placementNote&&<p className="model-placement-note">{model.placementNote}</p>}
-      {model.ceilingAsset&&<div className="ceiling-preview">
-        <span className="ceiling-preview-badge">Deneysel</span>
-        <p id={`ceiling-note-${model.id}`}>Kamerayı tavana yöneltin. Algılama düz tavanlarda başarısız olabilir; bu mod iPhone/iPad’de deneme aşamasında.</p>
-        <a className="ceiling-ar-link" rel="ar" href={`${model.ceilingAsset}#allowsContentScaling=0`} aria-describedby={`ceiling-note-${model.id}`} onClick={event=>{
-          if(!supportsQuickLook(event.currentTarget)){event.preventDefault();showPhone();setPhoneMode('ceiling')}
-        }}><img src={`${model.asset}/poster.webp`} alt="" width="38" height="38"/><span>iPhone’da tavanda dene</span><span aria-hidden="true">↗</span></a>
-      </div>}
       <button className="phone-link" aria-label={`${model.name}: Telefonda aç`} onClick={showPhone}>Telefonda aç <span aria-hidden="true">↗</span></button>
       {arMessage&&<p className="ar-message" role="status">{arMessage}</p>}
     </div>
@@ -152,7 +144,7 @@ function ModelCard({model, index, eager}: {model: CollectionModel; index: number
       <button className="dialog-close" aria-label="Kapat" onClick={()=>dialog.current?.close()}>×</button>
       <p className="eyebrow">MEKÂNINDA DENE</p><h2 id={dialogTitle}>Telefonunda aç.</h2>
       <p className="phone-model-name">{model.name}</p>
-      <p>Kameranla QR kodu okut. Açılan sayfada <strong>{phoneMode === 'ceiling' ? 'iPhone’da tavanda dene' : 'AR ile gör'}</strong> {phoneMode === 'ceiling' ? 'bağlantısına' : 'düğmesine'} dokun.</p>
+      <p>Kameranla QR kodu okut. Açılan sayfada <strong>AR ile gör</strong> düğmesine dokun.</p>
       {qr?<img className="model-qr" src={qr} alt={`${model.name} sayfasını telefonda açmak için QR kod`} width="256" height="256"/>:<p role="status">{qrError?'QR kod oluşturulamadı. Aşağıdaki bağlantıyı kullanabilirsiniz.':'QR kod hazırlanıyor…'}</p>}
       <button className="copy-model-link" onClick={copyLink}>{copied?'Bağlantı kopyalandı ✓':'Bağlantıyı kopyala'}</button>
       {copyError&&<p role="status">Bağlantı kopyalanamadı. Aşağıdaki bağlantıyı kullanabilirsiniz.</p>}

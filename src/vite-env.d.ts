@@ -8,6 +8,9 @@ declare module 'react' {
     'model-viewer': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
       src?: string; 'ios-src'?: string; ar?: boolean; 'camera-controls'?: boolean; autoplay?: boolean;
       exposure?: string; 'shadow-intensity'?: string; poster?: string; alt?: string;
+      'ar-modes'?: string; 'ar-scale'?: string; 'ar-placement'?: string; 'touch-action'?: string;
+      'shadow-softness'?: string; 'camera-orbit'?: string; 'field-of-view'?: string;
+      loading?: string; reveal?: string; 'interaction-prompt'?: string;
     }
    }
   }

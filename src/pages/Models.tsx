@@ -52,6 +52,21 @@ const models: CollectionModel[] = [
     placementNote: 'iPhone/iPad: kamerayı tavana yöneltin. Tavan yerleşimi deneme aşamasındadır. Android önizlemesi zemini referans alır.',
     ceilingAsset: '/models/altin-kristal-avize-v2/avize-tavan-v2.usdz',
   },
+  {
+    id: 'bordo-lake-mutfak',
+    name: 'Bordo Lake Mutfak',
+    category: 'MUTFAK',
+    asset: '/models/bordo-lake-mutfak-v1',
+    file: 'mutfak',
+    description: 'Parlak bordo kapaklar, buzlu cam üst dolaplar ve paslanmaz çelik detaylar. Açık buzdolabı, bulaşık makinesi ve tezgâh aksesuarlarıyla mutfağı yakından keşfedin.',
+    alt: 'Parlak bordo alt dolapları, buzlu cam üst dolapları, çelik davlumbazı, evyesi, açık buzdolabı ve bulaşık makinesi bulunan ayrıntılı mutfak ünitesi',
+    dimensions: [{label: 'Genişlik', value: 328, unit: 'cm'}, {label: 'Derinlik', value: 127, unit: 'cm'}, {label: 'Yükseklik', value: 240, unit: 'cm'}],
+    cameraOrbit: '18deg 78deg auto',
+    arModes: 'webxr quick-look',
+    environment: 'neutral',
+    exposure: '0.9',
+    placementNote: 'Üniteyi zemine yerleştirin; arka yüzünü duvarınıza hizalayın. Derinliğe açık kapaklar dahildir. Ölçüler referans görsele göre tahminidir.',
+  },
 ]
 
 function CubeIcon(){return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Z M3 7l9 5 9-5 M12 12v10"/></svg>}

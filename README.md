@@ -2,6 +2,22 @@
 
 `3d.balancebey.com` için bağımsız React/Vite uygulaması. Anonim model talebi, talep takibi, BalanceBey ödeme yönlendirmesi, yayın anketi, yönetim kuyruğu ve `<model-viewer>` tabanlı GLB/USDZ görüntüleyicisini içerir.
 
+## CAD çalışma alanı (MVP)
+
+`/cad` rotasında browser tabanlı parametrik CAD taslağı bulunur. XY/XZ/YZ düzlemi seçip Sketch oluşturun; çizgi, dikdörtgen veya daire çizin. Kapalı bir dikdörtgen ya da uçları birleşen çizgilerden sonra **Extrude** ekleyin. Sağ panelde mesafeyi mm cinsinden düzenleyin; katı model Three.js viewport'unda görünür. GLB dosyasını indirebilir veya aynı cihazda AR önizlemesini açabilirsiniz. JSON indir/aç ve otomatik yerel taslak kaydı feature history'yi korur; geri al/ileri al düzenleme oturumunda çalışır.
+
+Geometri `src/cad/kernel.ts` içindeki OpenCascade.js adapter'ında B-Rep olarak hesaplanır. OpenCascade tessellation ve GLB üretir; Three.js yalnız GLB'yi viewport'ta gösterir. Doküman birimi mm, geometri/GLB birimi gerçek AR ölçeği için metredir. WASM yalnız katı model ilk kez gerektiğinde yüklenir (yaklaşık 50 MB aktarım öncesi dosya boyutu). CAD hesaplaması tarayıcıda yapılır; sunucu GPU'su gerekmez.
+
+`src/cad/model.ts` sürümlü JSON dokümanını ve Sketch, Extrude, Revolve, Sweep, Loft, Boolean, Fillet, Chamfer feature türlerini tanımlar. Son altı tür için UI ve veri modeli genişleme noktası vardır; bunların geometri operatörleri ve kontrol panelleri henüz uygulanmadı. Daire çizim aracı ve açık çizgiler sketch'te saklanır, ancak bu MVP'de extrusion yalnız dikdörtgen veya kapalı çizgi profilini kabul eder. Constraint solver, ölçü kısıtları, çoklu profil/hole, assembly, STEP/USDZ export, sunucuya proje kaydı ve paylaşılabilir AR URL sonraki aşamalardır. Yerel Blob URL başka cihaza taşınamadığından AR önizlemesi aynı cihaz içindir.
+
+```bash
+npm run build
+npm run test
+npm run lint
+```
+
+Lint komutu yeni CAD modüllerini denetler; önceki sayfalar için lint altyapısı mevcut değildi. OpenCascade.js WASM dosyası LGPL-2.1-only lisanslı bağımlılık olarak paketlenir; dağıtımda lisans koşulları gözden geçirilmelidir.
+
 ```bash
 npm install
 npm run build
